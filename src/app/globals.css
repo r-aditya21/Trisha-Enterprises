@@ -1,26 +1,278 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: #003527;
+  --color-secondary: #006d2f;
+  --color-secondary-fixed-dim: #3de273;
+  --color-secondary-container: #5dfd8a;
+  --color-primary-container: #064e3b;
+  --color-primary-fixed-dim: #95d3ba;
+  --color-tertiary-fixed-dim: #f7be1d;
+  --color-tertiary-fixed: #ffdf9a;
+  --color-background: #f7f9fb;
+  --color-surface: #f7f9fb;
+  --color-on-surface: #191c1e;
+  --color-on-surface-variant: #404944;
+  --color-outline-variant: #bfc9c3;
+  --color-surface-container-low: #f2f4f6;
+  --color-surface-container: #eceef0;
+  --color-surface-container-high: #e6e8ea;
+  --color-on-background: #191c1e;
+  --color-error: #ba1a1a;
+  --color-inverse-surface: #2d3133;
+  --color-surface-tint: #2b6954;
+
+  --font-headline: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --spacing-section: 7.5rem;
+  --spacing-margin-mobile: 1.25rem;
+  --spacing-margin-desktop: 4rem;
+  --radius-card: 1.5rem;
+  --radius-pill: 9999px;
+
+  --shadow-glow: 0 0 80px rgba(61, 226, 115, 0.15);
+  --shadow-card: 0 25px 50px -12px rgba(0, 53, 39, 0.08);
+  --duration-premium: 0.6s;
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  body {
+    @apply bg-background text-on-surface font-body antialiased;
+    overflow-x: hidden;
+  }
+
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-headline);
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-secondary;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Mobile / tablet: never leave GSAP targets invisible */
+  @media (max-width: 1023px) {
+
+    .hero-animate,
+    .project-card,
+    .ai-card {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-animate {
+      will-change: transform, opacity;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+  }
+
+  .gradient-cta {
+    background: linear-gradient(135deg, #006d2f 0%, #3de273 100%);
+    box-shadow: 0 4px 20px rgba(0, 109, 47, 0.25);
+  }
+
+  .gradient-cta:hover {
+    box-shadow: 0 8px 28px rgba(0, 109, 47, 0.35);
+    transform: translateY(-2px);
+  }
+
+  .text-headline-xl {
+    @apply text-[2rem] md:text-5xl font-bold leading-[1.1] tracking-tight;
+  }
+
+  .text-headline-lg {
+    @apply text-[1.75rem] md:text-4xl font-bold leading-tight tracking-tight;
+  }
+
+  .text-headline-md {
+    @apply text-2xl font-semibold leading-snug;
+  }
+
+  .text-headline-sm {
+    @apply text-xl font-semibold;
+  }
+
+  .text-body-lg {
+    @apply text-lg leading-relaxed;
+  }
+
+  .text-body-md {
+    @apply text-base leading-normal;
+  }
+
+  .text-label-md {
+    @apply text-sm font-semibold uppercase tracking-wider;
+  }
+
+  .noise-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .energy-glow {
+    background: radial-gradient(ellipse 80% 50% at 50% 0%,
+        rgba(61, 226, 115, 0.12),
+        transparent 70%);
+  }
+
+  /* Lazy render below-fold sections for better initial paint */
+  .section-lazy {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
+  }
+}
+
+@keyframes pulse-soft {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.04);
+    opacity: 0.92;
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+@keyframes marquee-slow {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-slow {
+  animation: marquee-slow 60s linear infinite;
+}
+
+@keyframes marquee-testimonial {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-testimonial {
+  animation: marquee-testimonial 45s linear infinite;
+}
+
+/* Accordion open/close animations (used by Radix Accordion) */
+@keyframes accordion-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+.animate-accordion-down {
+  animation: accordion-down 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-accordion-up {
+  animation: accordion-up 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Subtle shake for form validation errors */
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  75% {
+    transform: translateX(4px);
+  }
 }
