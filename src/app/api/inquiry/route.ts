@@ -1,12 +1,19 @@
 import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 
-// Initialize Resend with your API Key (get one free at resend.com)
-const resend = new Resend(process.env.RESEND_API_KEY);
 const GOOGLE_SHEET_URL = process.env.GOOGLE_SHEET_WEBHOOK_URL;
 
 export async function POST(request: Request) {
   try {
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      return NextResponse.json(
+        { error: 'RESEND_API_KEY is not configured' },
+        { status: 500 },
+      );
+    }
+
+    const resend = new Resend(resendApiKey);
     const data = await request.json();
 
     // 1. Send data to Google Sheets
